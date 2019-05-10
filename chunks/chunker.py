@@ -12,7 +12,7 @@ import os
 from bs4 import BeautifulSoup as bs
 import lxml
 
-CHUNK = 200
+CHUNK = 180
 FILE = '../at_centerline.kmz'
 
 assert FILE.endswith('.kmz'), "KMZ file required"
@@ -27,11 +27,11 @@ places = soup.find_all('Placemark')
 print(len(places), "Placemarks found")
 chunks = len(places) // CHUNK
 chunks += bool(len(places) % CHUNK)
-print(f"I will create {chunks} files from it, each with {CHUNK} Placemarks or less")
+print("I will create {} files from it, each with {} Placemarks or less".format(chunks, CHUNK))
 print()
 
 for i in range(chunks):
-    print("working on chunk ...", i+1)
+    print("working on chunk {} ...".format(i+1))
     soup = bs(data, 'xml')
     places = soup.find_all('Placemark')
 
@@ -39,7 +39,7 @@ for i in range(chunks):
         place.extract()
     for place in places[i*CHUNK+CHUNK:]:
         place.extract()
-    with ZipFile(f"Chunk_{i+1}_{name}.kmz", "w") as f:
+    with ZipFile("Chunk_{}_{}.kmz".format(i+1, name), "w") as f:
         f.writestr('doc.kml', soup.prettify())
 
 print("done")
